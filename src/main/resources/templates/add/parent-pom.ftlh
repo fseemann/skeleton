@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>${groupId}</groupId>
-    <artifactId>${domainName}</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <artifactId>${artifactId}</artifactId>
+    <version>${version}</version>
 
 </project>
