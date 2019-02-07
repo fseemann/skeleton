@@ -15,6 +15,7 @@ fun add(addCommandArgs: AddCommandArgs) {
     val application = File("$domainName/$domainName-application")
     val domain = File("$domainName/$domainName-domain")
     val infrastructure = File("$domainName/$domainName-infrastructure")
+
     arrayOf(
         parent,
         application,
@@ -22,8 +23,16 @@ fun add(addCommandArgs: AddCommandArgs) {
         infrastructure
     ).forEach { it.mkdir() }
 
+    var groupId: String?
+    do {
+        print("Type group id: ")
+        groupId = readLine() ?: ""
+        print("Group id '$groupId' correct?[y/n]: ")
+    } while(readLine() != "y")
+
     val parentPom = FreemarkerConfig.getTemplate("add/parent-pom.ftlh")
     parentPom.process(mapOf(
+        "groupId" to groupId,
         "domainName" to domainName
-    ), FileWriter(File(application, "pom.xml")))
+    ), FileWriter(File(parent, "pom.xml")))
 }
