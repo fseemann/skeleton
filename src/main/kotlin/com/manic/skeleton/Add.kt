@@ -2,6 +2,7 @@ package com.manic.skeleton
 
 import com.xenomachina.argparser.SystemExitException
 import java.io.File
+import java.io.FileWriter
 
 fun add(addCommandArgs: AddCommandArgs) {
     val domainName = addCommandArgs.domainName
@@ -20,4 +21,9 @@ fun add(addCommandArgs: AddCommandArgs) {
         domain,
         infrastructure
     ).forEach { it.mkdir() }
+
+    val parentPom = FreemarkerConfig.getTemplate("add/parent-pom.ftlh")
+    parentPom.process(mapOf(
+        "domainName" to domainName
+    ), FileWriter(File(application, "pom.xml")))
 }
