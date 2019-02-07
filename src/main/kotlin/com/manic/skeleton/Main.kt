@@ -3,7 +3,6 @@ package com.manic.skeleton
 import com.xenomachina.argparser.ArgParser
 import com.xenomachina.argparser.SystemExitException
 import com.xenomachina.argparser.mainBody
-import java.io.File
 
 fun main(args: Array<String>) = mainBody {
     printSkeletor()
@@ -11,7 +10,7 @@ fun main(args: Array<String>) = mainBody {
     ArgParser(firstArgument).parseInto(::SkeletonProgramArgs).run {
         val argsWithoutInitialCommand = args.sliceArray(1 until args.size)
         when (command) {
-            "add" -> ArgParser(argsWithoutInitialCommand).parseInto(::AddCommandArgs).run(::handleAdd)
+            "add" -> ArgParser(argsWithoutInitialCommand).parseInto(::AddCommandArgs).run(::add)
             else -> throw SystemExitException(
                 """
                 Unkown COMMAND '$command'.
@@ -20,25 +19,6 @@ fun main(args: Array<String>) = mainBody {
             );
         }
     }
-}
-
-private fun handleAdd(addCommandArgs: AddCommandArgs) {
-    val domainName = addCommandArgs.domainName
-    val parent = File(domainName)
-
-    if (parent.exists()) {
-        throw SystemExitException("Directory ${parent.absoluteFile} is already existing.", 101)
-    }
-
-    val application = File("$domainName/$domainName-application")
-    val domain = File("$domainName/$domainName-domain")
-    val infrastructure = File("$domainName/$domainName-infrastructure")
-    arrayOf(
-        parent,
-        application,
-        domain,
-        infrastructure
-    ).forEach { it.mkdir() }
 }
 
 private fun printSkeletor() {
