@@ -6,15 +6,19 @@ import java.io.FileWriter
 
 fun add(addCommandArgs: AddCommandArgs) {
     val domainName = addCommandArgs.domainName
-    val parent = File(domainName)
 
+    val groupId = read("group id")
+    val artifactId = read("artifact id", domainName)
+    val version = read("version")
+
+    val parent = File(artifactId)
     if (parent.exists()) {
         throw SystemExitException("Directory ${parent.absoluteFile} is already existing.", 101)
     }
 
-    val application = File("$domainName/$domainName-application")
-    val domain = File("$domainName/$domainName-domain")
-    val infrastructure = File("$domainName/$domainName-infrastructure")
+    val application = File("$artifactId/$artifactId-application")
+    val domain = File("$artifactId/$artifactId-domain")
+    val infrastructure = File("$artifactId/$artifactId-infrastructure")
 
     arrayOf(
         parent,
@@ -23,19 +27,20 @@ fun add(addCommandArgs: AddCommandArgs) {
         infrastructure
     ).forEach { it.mkdir() }
 
-    val groupId = read("group id")
-    val artifactId = read("artifact id", domainName)
-    val version = read("version")
-
-    val parentPom = FreemarkerConfig.getTemplate("add/parent-pom.ftlh")
-    parentPom.process(
-        mapOf(
-            "groupId" to groupId,
-            "artifactId" to artifactId,
-            "version" to version
-        ), FileWriter(File(parent, "pom.xml"))
-    )
-
+    listOf(
+        Triple(parent, "add/parent-pom.ftlh", "pom.xml"),
+        Triple(application, "add/application-pom.ftlh", "pom.xml"),
+        Triple(domain, "add/domain-pom.ftlh", "pom.xml"),
+        Triple(infrastructure, "add/infrastructure-pom.ftlh", "pom.xml")
+    ).forEach {
+        FreemarkerConfig.getTemplate(it.second).process(
+            mapOf(
+                "groupId" to groupId,
+                "artifactId" to artifactId,
+                "version" to version
+            ), FileWriter(File(it.first, it.third))
+        )
+    }
     println("Domain created!")
 }
 
