@@ -13,9 +13,7 @@ data class ProjectDescriptor(
     val description: String?,
     val variables: Array<String>,
     val structure: Array<Structure>
-) {
-
-}
+)
 
 @Serializable
 data class Structure(
