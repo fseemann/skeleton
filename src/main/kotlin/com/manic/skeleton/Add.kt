@@ -28,7 +28,7 @@ fun add(addCommandArgs: AddCommandArgs) {
         ClassLoader.getSystemClassLoader().getResourceAsStream("templates/add/maven-domain-module.json").reader().readText()
     )
 
-    val readVariablesMap = projectDescriptor.variables.map { it to read(it) }.toMap()
+    val readVariablesMap = read(projectDescriptor.variables)
     projectDescriptor.structure.forEach { structure ->
         val actualDir = replace(structure.dir, readVariablesMap)
         val actualFile = File(actualDir)
@@ -54,19 +54,22 @@ private fun replace(
     }
 }
 
-private fun read(propertyName: String, suggestion: String? = null): String? {
-    if (suggestion != null) {
-        print("Take $propertyName '$suggestion'?[y/n]: ")
-        when (readLine()) {
-            "y" -> return suggestion
-        }
-    }
-
-    var property: String?
+private fun read(propertyNames: Array<String>): Map<String, String?> {
+    val readProperties = mutableMapOf<String, String?>()
     do {
-        print("Type $propertyName: ")
-        property = readLine() ?: ""
-        print("${propertyName.capitalize()} '$property' correct?[y/n]: ")
+        readProperties.clear()
+        propertyNames.forEach { propertyName ->
+            print("Type $propertyName: ")
+            readProperties[propertyName] = readLine() ?: ""
+        }
+
+        println()
+        println("{")
+        readProperties.forEach { println("\"${it.key}\": \"${it.value}\"") }
+        println("}")
+        println()
+
+        print("Are values correct?[y/n]: ")
     } while (readLine() != "y")
-    return property
+    return readProperties
 }
