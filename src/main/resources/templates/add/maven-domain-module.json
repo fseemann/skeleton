@@ -1,0 +1,32 @@
+{
+  "version": "latest",
+  "name": "maven-domain-module",
+  "description": "Multimodule maven directory structure for domain driven design.",
+  "variables": [
+    "groupId",
+    "artifactId",
+    "version"
+  ],
+  "structure": [
+    {
+      "dir": "${artifactId}",
+      "file": "pom.xml",
+      "template": "parent-pom.ftlh"
+    },
+    {
+      "dir": "${artifactId}/${artifactId}-application",
+      "file": "pom.xml",
+      "template": "application-pom.ftlh"
+    },
+    {
+      "dir": "${artifactId}/${artifactId}-domain",
+      "file": "pom.xml",
+      "template": "domain-pom.ftlh"
+    },
+    {
+      "dir": "${artifactId}/${artifactId}-infrastructure",
+      "file": "pom.xml",
+      "template": "infrastructure-pom.ftlh"
+    }
+  ]
+}
