@@ -1,47 +1,59 @@
 package com.manic.skeleton
 
 import com.xenomachina.argparser.SystemExitException
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.Json.Companion.parse
 import java.io.File
 import java.io.FileWriter
 
+@Serializable
+data class ProjectDescriptor(
+    val version: Int,
+    val name: String,
+    val description: String?,
+    val variables: Array<String>,
+    val structure: Array<Structure>
+) {
+
+}
+
+@Serializable
+data class Structure(
+    val dir: String,
+    val file: String,
+    val template: String
+)
+
 fun add(addCommandArgs: AddCommandArgs) {
-    val domainName = addCommandArgs.domainName
+    val projectDescriptor = parse(
+        ProjectDescriptor.serializer(),
+        ClassLoader.getSystemClassLoader().getResourceAsStream("templates/add/maven-domain-module.json").reader().readText()
+    )
 
-    val groupId = read("group id")
-    val artifactId = read("artifact id", domainName)
-    val version = read("version")
+    val readVariablesMap = projectDescriptor.variables.map { it to read(it) }.toMap()
+    projectDescriptor.structure.forEach { structure ->
+        val actualDir = replace(structure.dir, readVariablesMap)
+        val actualFile = File(actualDir)
+        actualFile.mkdir()
 
-    val parent = File(artifactId)
-    if (parent.exists()) {
-        throw SystemExitException("Directory ${parent.absoluteFile} is already existing.", 101)
-    }
-
-    val application = File("$artifactId/$artifactId-application")
-    val domain = File("$artifactId/$artifactId-domain")
-    val infrastructure = File("$artifactId/$artifactId-infrastructure")
-
-    arrayOf(
-        parent,
-        application,
-        domain,
-        infrastructure
-    ).forEach { it.mkdir() }
-
-    listOf(
-        Triple(parent, "add/parent-pom.ftlh", "pom.xml"),
-        Triple(application, "add/application-pom.ftlh", "pom.xml"),
-        Triple(domain, "add/domain-pom.ftlh", "pom.xml"),
-        Triple(infrastructure, "add/infrastructure-pom.ftlh", "pom.xml")
-    ).forEach {
-        FreemarkerConfig.getTemplate(it.second).process(
-            mapOf(
-                "groupId" to groupId,
-                "artifactId" to artifactId,
-                "version" to version
-            ), FileWriter(File(it.first, it.third))
+        FreemarkerConfig.getTemplate("add/${structure.template}").process(
+            readVariablesMap,
+            FileWriter(File(actualFile, structure.file))
         )
     }
     println("Domain created!")
+}
+
+private fun replace(
+    value: String,
+    readVariablesMap: Map<String, String?>
+): String {
+    return value.replace(Regex("\\$\\{(.*?)}")) {
+        readVariablesMap[it.destructured.component1()] ?: throw SystemExitException(
+            "Couldnt find value for variable '${it.value}'",
+            101
+        )
+    }
 }
 
 private fun read(propertyName: String, suggestion: String? = null): String? {
