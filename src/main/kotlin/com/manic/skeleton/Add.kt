@@ -8,7 +8,7 @@ import java.io.FileWriter
 
 @Serializable
 data class ProjectDescriptor(
-    val version: Int,
+    val version: String,
     val name: String,
     val description: String?,
     val variables: Array<String>,

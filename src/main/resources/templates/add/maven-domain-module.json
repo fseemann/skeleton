@@ -1,5 +1,5 @@
 {
-  "version": 1,
+  "version": "latest",
   "name": "maven-domain-module",
   "description": "Multimodule maven directory structure for domain driven design.",
   "variables": [
