@@ -63,12 +63,6 @@ private fun read(propertyNames: Array<String>): Map<String, String?> {
             readProperties[propertyName] = readLine() ?: ""
         }
 
-        println()
-        println("{")
-        readProperties.forEach { println("\"${it.key}\": \"${it.value}\"") }
-        println("}")
-        println()
-
         print("Are values correct?[y/n]: ")
     } while (readLine() != "y")
     return readProperties
