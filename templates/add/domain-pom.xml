@@ -3,12 +3,12 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>${groupId}</groupId>
-        <artifactId>${artifactId}</artifactId>
-        <version>${version}</version>
+        <groupId>{{.groupId}}</groupId>
+        <artifactId>{{.artifactId}}</artifactId>
+        <version>{{.version}}</version>
     </parent>
 
-    <artifactId>${artifactId}-domain</artifactId>
-    <version>${version}</version>
+    <artifactId>{{.artifactId}}-domain</artifactId>
+    <version>{{.version}}</version>
 
 </project>

@@ -3,19 +3,19 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>${groupId}</groupId>
-        <artifactId>${artifactId}</artifactId>
-        <version>${version}</version>
+        <groupId>{{.groupId}}</groupId>
+        <artifactId>{{.artifactId}}</artifactId>
+        <version>{{.version}}</version>
     </parent>
 
-    <artifactId>${artifactId}-infrastructure</artifactId>
-    <version>${version}</version>
+    <artifactId>{{.artifactId}}-application</artifactId>
+    <version>{{.version}}</version>
 
     <dependencies>
         <dependency>
-            <groupId>${groupId}</groupId>
-            <artifactId>${artifactId}-application</artifactId>
-            <version>${version}</version>
+            <groupId>{{.groupId}}</groupId>
+            <artifactId>{{.artifactId}}-domain</artifactId>
+            <version>{{.version}}</version>
         </dependency>
     </dependencies>
 </project>
