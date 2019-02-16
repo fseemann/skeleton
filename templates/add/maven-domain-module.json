@@ -11,22 +11,22 @@
     {
       "dir": "${artifactId}",
       "file": "pom.xml",
-      "template": "parent-pom.ftlh"
+      "template": "parent-pom.xml"
     },
     {
       "dir": "${artifactId}/${artifactId}-application",
       "file": "pom.xml",
-      "template": "application-pom.ftlh"
+      "template": "application-pom.xml"
     },
     {
       "dir": "${artifactId}/${artifactId}-domain",
       "file": "pom.xml",
-      "template": "domain-pom.ftlh"
+      "template": "domain-pom.xml"
     },
     {
       "dir": "${artifactId}/${artifactId}-infrastructure",
       "file": "pom.xml",
-      "template": "infrastructure-pom.ftlh"
+      "template": "infrastructure-pom.xml"
     }
   ]
 }
