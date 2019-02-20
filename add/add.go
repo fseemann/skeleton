@@ -29,7 +29,7 @@ type structure struct {
 }
 
 func Add() {
-	fileContent, err := ioutil.ReadFile("src/github.com/manic/skeleton/templates/add/maven-domain-module.json")
+	fileContent, err := ioutil.ReadFile("src/github.com/skeleton-cli/skeleton-cli/templates/add/Skeletonfile.json")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -42,7 +42,7 @@ func Add() {
 	variables := readVariables(pd.Variables)
 	for _, struc := range pd.Structure {
 		actualDir := replaceVariables(struc.Dir, variables)
-		t := template.Must(template.ParseFiles("src/github.com/manic/skeleton/templates/add/" + struc.Template))
+		t := template.Must(template.ParseFiles("src/github.com/skeleton/skeleton-cli/templates/add/" + struc.Template))
 		if err := os.MkdirAll(actualDir, os.ModePerm); err != nil {
 			log.Fatal(err)
 		}

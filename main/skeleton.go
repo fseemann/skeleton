@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/manic/skeleton/add"
+	"github.com/skeleton/skeleton-cli/add"
 	"log"
 	"os"
 )
