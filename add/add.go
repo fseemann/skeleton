@@ -2,11 +2,14 @@ package add
 
 import (
 	"bufio"
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"html/template"
+	"io"
 	"io/ioutil"
 	"log"
+	"net/http"
 	"os"
 	"regexp"
 	"strings"
@@ -28,21 +31,29 @@ type structure struct {
 	Template string `json:"template"`
 }
 
-func Add() {
-	fileContent, err := ioutil.ReadFile("src/github.com/skeleton-cli/skeleton-cli/templates/add/Skeletonfile.json")
+type response struct {
+	FileUrls []string `json:"fileUrls"`
+}
+
+func Add(args []string) {
+	response := getTemplate([]byte(` { "groupId": "fseemann", "name": "maven-domain-module", "version": "latest" } `))
+	files := createTmpFiles(response.FileUrls)
+
+	filecontents, err := ioutil.ReadFile(files[0].Name())
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	var pd projectDescriptor
-	if err := json.Unmarshal(fileContent, &pd); err != nil {
+	if err := json.Unmarshal(filecontents, &pd); err != nil {
 		log.Fatal(err)
 	}
 
+	templateFiles := files[1:]
 	variables := readVariables(pd.Variables)
-	for _, struc := range pd.Structure {
+	for i, struc := range pd.Structure {
 		actualDir := replaceVariables(struc.Dir, variables)
-		t := template.Must(template.ParseFiles("src/github.com/skeleton/skeleton-cli/templates/add/" + struc.Template))
+		t := template.Must(template.ParseFiles(templateFiles[i].Name()))
 		if err := os.MkdirAll(actualDir, os.ModePerm); err != nil {
 			log.Fatal(err)
 		}
@@ -58,6 +69,59 @@ func Add() {
 		_ = writer.Flush()
 		_ = file.Close()
 	}
+
+	removeFiles(files)
+}
+
+func createTmpFiles(fileUrls []string) []*os.File {
+	files := make([]*os.File, len(fileUrls))
+	for i, url := range fileUrls {
+		resp, err := http.Get(url)
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		tmpFile, err := ioutil.TempFile(os.TempDir(), "prefix-")
+		if err != nil {
+			removeFiles(files)
+			log.Fatal("Cannot create temporary file", err)
+		}
+
+		_, err = io.Copy(tmpFile, resp.Body)
+		if err != nil {
+			removeFiles(files)
+			log.Fatal(err)
+		}
+
+		resp.Body.Close()
+		files[i] = tmpFile
+	}
+
+	return files
+}
+
+func removeFiles(files []*os.File) {
+	for _, f := range files {
+		_ = f.Close()
+		_ = os.Remove(f.Name())
+	}
+}
+
+func getTemplate(body []byte) response {
+	resp, err := http.Post("https://p33dswbrne.execute-api.eu-central-1.amazonaws.com/develop/template", "application/json", bytes.NewBuffer(body))
+	if err != nil {
+		log.Fatal(err)
+	}
+	respBody, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		log.Fatal(err)
+	}
+	var responseMarshaled response
+	if err := json.Unmarshal(respBody, &responseMarshaled); err != nil {
+		log.Fatal(err)
+	}
+	resp.Body.Close()
+	return responseMarshaled
 }
 
 func replaceVariables(value string, variables map[string]string) string {

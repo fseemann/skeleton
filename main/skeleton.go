@@ -15,6 +15,6 @@ func main() {
 	}
 	switch args[1] {
 	case "add":
-		add.Add()
+		add.Add(args[1:])
 	}
 }
