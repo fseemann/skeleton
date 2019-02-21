@@ -10,11 +10,13 @@ var cmd = []string{"add"}
 
 func main() {
 	args := os.Args
-	if len(args) != 2 {
+	if len(args) < 2 {
 		log.Fatal("Use on of the following commands: \n", cmd)
 	}
 	switch args[1] {
 	case "add":
-		add.Add(args[1:])
+		add.Add(args[2:])
+	default:
+		log.Fatal("Unknown command.")
 	}
 }
