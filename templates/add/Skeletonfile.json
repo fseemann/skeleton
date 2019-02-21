@@ -1,8 +1,4 @@
 {
-  "version": "latest",
-  "name": "maven-domain-module",
-  "groupId": "fseemann",
-  "description": "Multimodule maven directory structure for domain driven design.",
   "variables": [
     "groupId",
     "artifactId",

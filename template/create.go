@@ -21,11 +21,8 @@ const SKELETON_FILE = "Skeletonfile.json"
 var regex = regexp.MustCompile("\\${(.*?)}")
 
 type skeletonfile struct {
-	Version     string      `json:"version"`
-	Name        string      `json:"name"`
-	Description string      `json:"description"`
-	Variables   []string    `json:"variables"`
-	Structure   []structure `json:"structure"`
+	Variables []string    `json:"variables"`
+	Structure []structure `json:"structure"`
 }
 
 type structure struct {
