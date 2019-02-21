@@ -1,12 +1,12 @@
 package main
 
 import (
-	"github.com/skeleton/skeleton-cli/add"
+	"github.com/skeleton/skeleton-cli/template"
 	"log"
 	"os"
 )
 
-var cmd = []string{"add"}
+var cmd = []string{"create"}
 
 func main() {
 	args := os.Args
@@ -14,9 +14,9 @@ func main() {
 		log.Fatal("Use on of the following commands: \n", cmd)
 	}
 	switch args[1] {
-	case "add":
-		add.Add(args[2:])
+	case "create":
+		template.Create(args[2:])
 	default:
-		log.Fatal("Unknown command.")
+		log.Fatalf("usage: %v", cmd)
 	}
 }

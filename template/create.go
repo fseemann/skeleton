@@ -1,4 +1,4 @@
-package add
+package template
 
 import (
 	"bufio"
@@ -44,7 +44,7 @@ type request struct {
 	Version string `json:"version"`
 }
 
-func Add(args []string) {
+func Create(args []string) {
 	requestBody := createRequestBody(args)
 
 	response := fetchTemplate(requestBody)
