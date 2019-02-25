@@ -13,9 +13,13 @@ func main() {
 	if len(args) < 2 {
 		log.Fatal("Use on of the following commands: \n", cmd)
 	}
+
+	remainingArgs := args[2:]
 	switch args[1] {
 	case "create":
-		template.Create(args[2:])
+		template.Create(remainingArgs)
+	case "build":
+		template.Build(remainingArgs)
 	default:
 		log.Fatalf("usage: %v", cmd)
 	}
